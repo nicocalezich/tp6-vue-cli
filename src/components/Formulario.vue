@@ -1,7 +1,7 @@
 <template>
 
   <section class="src-components-formulario">
-    <vue-form :state="formState" @submit.prevent="enviar()">
+    <vue-form :state="formState" @submit.prevent="postUsuario()">
       <validate tag="div">
         <label for="nombre" class="mt-1">Nombre</label>
         <input
@@ -16,9 +16,9 @@
           required
         >
         <field-messages name="nombre" show="$dirty">
-          <div slot="required" class="alert alert-danger mt-1">Debe completar este campo</div>
-          <div slot="minlength" class="alert alert-danger mt-1">Debe ingresar como minimo {{caracterMin}} caracteres</div>
-          <div v-if="formData.nombre.length == caracterMax" class="alert alert-warning mt-1">Puede ingresar como maximo {{caracterMax}} caracteres</div>
+          <div slot="required" class="alert alert-danger mt-2">Debe completar este campo</div>
+          <div slot="minlength" class="alert alert-danger mt-2">Debe ingresar como minimo {{caracterMin}} caracteres</div>
+          <div v-if="formData.nombre.length == caracterMax" class="alert alert-warning mt-2">Puede ingresar como maximo {{caracterMax}} caracteres</div>
         </field-messages>
       </validate> 
 
@@ -35,9 +35,9 @@
           required
         >
         <field-messages name="edad" show="$dirty">
-          <div slot="required" class="alert alert-danger mt-1">Debe completar este campo</div>
-          <div slot="min" class="alert alert-danger mt-1">La edad minima es de {{edadMin}} años</div>
-          <div slot="max" class="alert alert-danger mt-1">La edad maxima es de {{edadMax}} años</div>
+          <div slot="required" class="alert alert-danger mt-2">Debe completar este campo</div>
+          <div slot="min" class="alert alert-danger mt-2">La edad minima es de {{edadMin}} años</div>
+          <div slot="max" class="alert alert-danger mt-2">La edad maxima es de {{edadMax}} años</div>
         </field-messages>
       </validate>  
 
@@ -53,8 +53,8 @@
           required
         >
          <field-messages name="email" show="$dirty">
-          <div slot="required" class="alert alert-danger mt-1">Debe completar este campo</div>
-          <div slot="email" class="alert alert-danger mt-1">Email invalido</div>
+          <div slot="required" class="alert alert-danger mt-2">Debe completar este campo</div>
+          <div slot="email" class="alert alert-danger mt-2">Email invalido</div>
         </field-messages>
       </validate> 
       <button type="submit" :disabled="formState.$invalid" class="btn btn-success mt-3">Agregar</button>
@@ -79,6 +79,7 @@
         caracterMax: 15,
         edadMin: 18,
         edadMax: 120,
+        url: 'https://60aa960a66f1d00017773022.mockapi.io/Usuarios',
       }
     },
     methods: {
@@ -90,12 +91,22 @@
         }
       },
 
-      enviar(){
-        console.log({...this.formData})
+       async postUsuario() {                       
+        let usuario = {
+          nombre: this.formData.nombre,
+          edad: this.formData.edad,
+          email: this.formData.email    
+        }
+        try {
+          await this.axios.post(this.url,usuario,{'content-type':'application/json'})
+        }
+        catch(error) {
+          console.error(error)
+        }
+
         this.formData = this.getInicialData()
         this.formState._reset()
       }
-
 
     },
     computed: {
